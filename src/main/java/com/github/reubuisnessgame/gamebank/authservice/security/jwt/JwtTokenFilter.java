@@ -1,13 +1,9 @@
 package com.github.reubuisnessgame.gamebank.authservice.security.jwt;
 
-
-import com.github.senyast4745.gamebank.model.ExceptionModel;
-import com.google.common.annotations.Beta;
+import com.github.reubuisnessgame.gamebank.authservice.model.ExceptionModel;
 import com.google.gson.Gson;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.FilterChain;
@@ -21,7 +17,7 @@ public class JwtTokenFilter extends GenericFilterBean {
 
     private JwtTokenProvider jwtTokenProvider;
 
-    public JwtTokenFilter(JwtTokenProvider jwtTokenProvider) {
+    JwtTokenFilter(JwtTokenProvider jwtTokenProvider) {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 

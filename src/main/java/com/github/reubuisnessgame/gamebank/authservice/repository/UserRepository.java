@@ -8,5 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends CrudRepository<UserModel, Long> {
+    Optional<UserModel> findTopByUsername(String number);
     Optional<UserModel> findByUsername(String number);
 }
