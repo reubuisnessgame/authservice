@@ -12,6 +12,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 public class JwtTokenFilter extends GenericFilterBean {
 
@@ -20,6 +21,8 @@ public class JwtTokenFilter extends GenericFilterBean {
     JwtTokenFilter(JwtTokenProvider jwtTokenProvider) {
         this.jwtTokenProvider = jwtTokenProvider;
     }
+
+    private PrintWriter writer;
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain filterChain)
@@ -34,12 +37,14 @@ public class JwtTokenFilter extends GenericFilterBean {
                     SecurityContextHolder.getContext().setAuthentication(auth);
                 }
             }
-        }catch (InvalidJwtAuthenticationException e){
+        } catch (InvalidJwtAuthenticationException e) {
             ExceptionModel ex = new ExceptionModel(403, "Forbidden",
                     e.getMessage(), ((HttpServletRequest) req).getRequestURI());
             Gson gson = new Gson();
             String json = gson.toJson(ex);
-            res.getWriter().append(json);
+            if (writer == null) {
+                writer = res.getWriter().append(json);
+            }
         }
         filterChain.doFilter(req, res);
     }

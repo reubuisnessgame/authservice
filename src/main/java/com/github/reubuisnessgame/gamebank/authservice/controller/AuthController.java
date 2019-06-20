@@ -47,12 +47,9 @@ public class AuthController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @RequestMapping(value = "/{username}", method = RequestMethod.POST)
+    @RequestMapping(value = "/{username}", method = RequestMethod.GET)
     public ResponseEntity signIn(@PathVariable(value = "username") String username ) {
         try {
-            UserModel userModel = userRepository.findByUsername(username).orElseThrow(()
-                    -> new UsernameNotFoundException("Username " + username + "not found"));
-            //TODO thinking about authenticationManager
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, "team"));
             String token = jwtTokenProvider.createToken(username, Role.TEAM.name());
             Map<Object, Object> model = new HashMap<>();
@@ -72,8 +69,7 @@ public class AuthController {
                 LOGGER.warn("NULL USER ALERT!!!");
                 return ResponseEntity.badRequest().build();
             } else {
-                LOGGER.warn("Finding user " + authForm.getUsername() + " " +authForm.getPassword()
-                        + " " + userModel.getUsername() + " " + userModel.getPassword() + " Is password ok " +
+                LOGGER.warn("Finding user " + authForm.getUsername() + " Is password ok " +
                         passwordEncoder.matches(authForm.getPassword(), userModel.getPassword()));
             }
 
