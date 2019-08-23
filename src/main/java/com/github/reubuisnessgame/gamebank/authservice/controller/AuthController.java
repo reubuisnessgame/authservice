@@ -8,6 +8,7 @@ import com.github.reubuisnessgame.gamebank.authservice.security.jwt.JwtTokenProv
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -47,13 +48,19 @@ public class AuthController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @RequestMapping(value = "/{username}", method = RequestMethod.GET)
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ResponseEntity lok(){
+        return ok("OK HELLO");
+    }
+
+    @RequestMapping(value = "/{username}", method = RequestMethod.POST)
     public ResponseEntity signIn(@PathVariable(value = "username") String username ) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, "team"));
             String token = jwtTokenProvider.createToken(username, Role.TEAM.name());
             Map<Object, Object> model = new HashMap<>();
             model.put("username", username);
+            model.put("role", "TEAM");
             model.put("token", token);
             return ok(model);
         } catch (AuthenticationException e) {
@@ -61,7 +68,7 @@ public class AuthController {
         }
     }
 
-    @RequestMapping(value = "/admin", method = RequestMethod.POST)
+    @RequestMapping(value = "/admin", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity signInAdmin(@RequestBody AuthForm authForm) {
         try {
             UserModel userModel = userRepository.findByUsername(authForm.getUsername()).orElse(null);
@@ -80,6 +87,7 @@ public class AuthController {
 
             Map<Object, Object> model = new HashMap<>();
             model.put("username", authForm.getUsername());
+            model.put("role", userModel.getRole());
             model.put("token", token);
             return ok(model);
         } catch (AuthenticationException e) {
